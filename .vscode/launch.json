@@ -20,6 +20,12 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
-        }
+        },
+        {
+        "name": "chrome run dev",
+        "request": "launch",
+        "type": "dart",
+        "args": ["-d", "chrome","--web-port", "3000"],
+    }
     ]
 }

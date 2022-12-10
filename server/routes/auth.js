@@ -1,5 +1,7 @@
 const express = require("express");
 const User = require("../models/user");
+const jwt = require("jsonwebtoken");
+const auth = require("../middlewares/auth");
 
 const authRouter = express.Router();
 
@@ -9,6 +11,7 @@ authRouter.post('/api/signup', async (req, res) => {
 
       // email already exits ?
       let user = await User.findOne({email: email});
+
       if(!user){
          user = new User({
             email,
@@ -17,13 +20,19 @@ authRouter.post('/api/signup', async (req, res) => {
          });
          user = await user.save();
       }
-      res.json({user});
+      const token =  jwt.sign({id: user._id}, "passwordKey");
+      res.json({user,token});
       // store data
-
-
-   } catch (error) {
-      
+   } catch (e) {
+      res.status(500).json({error: e.message})
    }
+});
+
+authRouter.get('/',auth, async (req, res) =>{
+
+   const user = await User.findById(req.user);
+   res.json({user, token: req.token});
+   
 });
 
 module.exports = authRouter;
